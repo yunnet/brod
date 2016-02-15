@@ -30,6 +30,7 @@
         , get_metadata/2
         , get_partitions/2
         , get_producer/3
+        , add_producer/3
         , register_producer/3
         , start_link/4
         , start_link/5
@@ -163,6 +164,10 @@ get_partitions(Client, Topic) ->
     {error, Reason} ->
       {error, Reason}
   end.
+
+-spec add_producer(client(), topic(), partition()) -> ok.
+add_producer(ClientId, Topic, Partition) when is_atom(ClientId) ->
+  gen_server:cast(ClientId, {add_producer, Topic, Partition}).
 
 %% @doc Register self() as a partition producer the pid is registered in an ETS
 %% table, then the callers may lookup a producer pid from the table and make
@@ -310,6 +315,19 @@ handle_cast({register_producer, Topic, Partition, ProducerPid},
             #state{producers_tab = Tab} = State) ->
   ets:insert(Tab, ?PRODUCER(Topic, Partition, ProducerPid)),
   {noreply, State};
+
+handle_cast({add_producer, Topic, Partition}, #state{producers_sup = ProducerSup} = State) ->
+  ClientPid = self(),
+  Args      = [ClientPid, Topic, Partition, []],
+  Producer = {Partition
+    , {brod_producer, start_link, Args}
+    , {permanent, 5}
+    , 5000
+    , worker
+    , [brod_producer]},
+  supervisor3:start_child(ProducerSup, Producer),
+  {noreply, State};
+
 handle_cast(Cast, State) ->
   error_logger:warning_msg("~p [~p] ~p got unexpected cast: ~p",
                           [?MODULE, self(), State#state.client_id, Cast]),

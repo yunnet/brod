@@ -33,6 +33,7 @@
 %% Client API
 -export([ get_partitions/2
         , get_producer/3
+        , add_producer/3
         , start_link_client/3
         , start_link_client/5
         , stop_client/1
@@ -149,6 +150,11 @@ get_partitions(Client, Topic) ->
                        | {producer_not_found, topic(), partition()}.
 get_producer(Client, Topic, Partition) ->
   brod_client:get_producer(Client, Topic, Partition).
+
+%% @equiv brod_client:add_producer/3
+-spec add_producer(client(), topic(), partition()) -> ok.
+add_producer(ClientId, Topic, Partition) ->
+  brod_client:add_producer(ClientId, Topic, Partition).
 
 %% @equiv produce(Pid, 0, <<>>, Value)
 -spec produce(pid(), binary()) ->
