@@ -317,10 +317,10 @@ handle_cast({register_producer, Topic, Partition, ProducerPid},
   ets:insert(Tab, ?PRODUCER(Topic, Partition, ProducerPid)),
   {noreply, State};
 
-handle_cast({add_producer, Topic, Partition}, State) -> %%#state{producers_sup = ProducerSup} = State) ->
+handle_cast({add_producer, Topic, Partition}, #state{producers_sup = ProducerSup} = State) ->
   ClientPid = self(),
   io:format("CLIENT_CAST: Client pid: ~p~n", [ClientPid]),
-  ProducerSup = gen_server:call(ClientPid, get_producers_sup_pid, infinity),
+%%  ProducerSup = gen_server:call(ClientPid, get_producers_sup_pid, infinity),
   io:format("CLIENT_CAST: Supervisor pid: ~p~n", [ProducerSup]),
   Args      = [ClientPid, Topic, Partition, []],
   Producer = {Partition
