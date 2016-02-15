@@ -167,6 +167,7 @@ get_partitions(Client, Topic) ->
 
 -spec add_producer(client(), topic(), partition()) -> ok.
 add_producer(ClientId, Topic, Partition) when is_atom(ClientId) ->
+  lager:debug("ADD_PRODUCER: Adding new producer for client ~p, topic: ~p, partition: ~p", [ClientId, Topic, Partition]),
   gen_server:cast(ClientId, {add_producer, Topic, Partition}).
 
 %% @doc Register self() as a partition producer the pid is registered in an ETS
