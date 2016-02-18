@@ -235,7 +235,7 @@ handle_info({msg, Pid, CorrId, #produce_response{} = R},
   Partition = State#state.partition, %% assert
   case brod_kafka:is_error(ErrorCode) of
     true ->
-      ErrorDesc = brod_kafka_error:desc(ErrorCode),
+      ErrorDesc = brod_kafka_errors:desc(ErrorCode),
       error_logger:error_msg(
         "Error in produce response\n"
         "Topic: ~s\n"
