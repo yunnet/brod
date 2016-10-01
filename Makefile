@@ -5,7 +5,9 @@ PROJECT_VERSION = 2.2.0
 DEPS = supervisor3 kafka_protocol
 
 dep_supervisor3_commit = 1.1.2
-dep_kafka_protocol_commit = 0.6.0
+dep_kafka_protocol_commit = support-snappy
+
+NO_AUTOPATCH = snappyer
 
 TEST_DEPS = meck proper
 
